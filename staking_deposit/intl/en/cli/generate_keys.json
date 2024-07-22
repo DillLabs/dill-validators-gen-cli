@@ -8,7 +8,7 @@
             "help": "The folder path for the keystore(s) and deposit(s). Pointing to `./validator_keys` by default."
         },
         "chain": {
-            "help": "The name of Dill PoS chain you are targeting. Use \"dill\" if you are depositing DIL",
+            "help": "The name of Dill PoS chain you are targeting. Use \"dill\" if you are depositing DILL",
             "prompt": "Please choose the (dill or dill-testnet) network/chain name"
         },
         "keystore_password": {

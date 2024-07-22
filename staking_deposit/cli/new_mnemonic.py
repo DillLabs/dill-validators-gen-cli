@@ -34,18 +34,9 @@ languages = get_first_options(MNEMONIC_LANG_OPTIONS)
     help=load_text(['arg_new_mnemonic', 'help'], func='new_mnemonic'),
 )
 @click.pass_context
-@jit_option(
-    callback=captive_prompt_callback(
-        lambda mnemonic_language: fuzzy_reverse_dict_lookup(mnemonic_language, MNEMONIC_LANG_OPTIONS),
-        choice_prompt_func(lambda: load_text(['arg_mnemonic_language', 'prompt'], func='new_mnemonic'), languages),
-    ),
-    default=lambda: load_text(['arg_mnemonic_language', 'default'], func='new_mnemonic'),
-    help=lambda: load_text(['arg_mnemonic_language', 'help'], func='new_mnemonic'),
-    param_decls='--mnemonic_language',
-    prompt=choice_prompt_func(lambda: load_text(['arg_mnemonic_language', 'prompt'], func='new_mnemonic'), languages),
-)
 @generate_keys_arguments_decorator
-def new_mnemonic(ctx: click.Context, mnemonic_language: str, **kwargs: Any) -> None:
+def new_mnemonic(ctx: click.Context, **kwargs: Any) -> None:
+    mnemonic_language = 'english'  # Hardcode language to english
     mnemonic = get_mnemonic(language=mnemonic_language, words_path=WORD_LISTS_PATH)
     test_mnemonic = ''
     while mnemonic != reconstruct_mnemonic(test_mnemonic, WORD_LISTS_PATH):
