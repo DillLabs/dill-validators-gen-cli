@@ -115,6 +115,7 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
             param_decls="--deposit_amount",
             prompt=lambda: load_text(['deposit_amount', 'prompt'], func='generate_keys_arguments_decorator'),
         ),
+        click.option('--save_password', is_flag=True, default=False, help='Save the keystore password to a file.'),
     ]
     for decorator in reversed(decorators):
         function = decorator(function)
@@ -124,8 +125,8 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
 @click.command()
 @click.pass_context
 def generate_keys(ctx: click.Context, validator_start_index: int,
-                  num_validators: int, folder: str, chain: str, keystore_password: str,
-                  execution_address: HexAddress, deposit_amount: int, **kwargs: Any) -> None:
+                    num_validators: int, folder: str, chain: str, keystore_password: str,
+                    execution_address: HexAddress, deposit_amount: int, save_password: bool, **kwargs: Any) -> None:
     mnemonic = ctx.obj['mnemonic']
     mnemonic_password = ctx.obj['mnemonic_password']
     amounts = [deposit_amount] * num_validators
@@ -147,7 +148,8 @@ def generate_keys(ctx: click.Context, validator_start_index: int,
     )
     keystore_filefolders = credentials.export_keystores(password=keystore_password, folder=folder)
     deposits_file = credentials.export_deposit_data_json(folder=folder)
-    credentials.save_password(password=keystore_password, folder=folder)
+    if save_password:
+        credentials.save_password(password=keystore_password, folder=folder)
     if not credentials.verify_keystores(keystore_filefolders=keystore_filefolders, password=keystore_password):
         raise ValidationError(load_text(['err_verify_keystores']))
     if not verify_deposit_data_json(deposits_file, credentials.credentials):

@@ -252,12 +252,31 @@ class CredentialList:
     def save_password(self, password: str, folder: str) -> str:
         """
         Securely saves the password to a file in the specified folder.
+        Checks if the file already exists and handles it accordingly.
         """
         password_file = os.path.join(folder, 'keystore_password.txt')
+        
+        # Check if the file already exists
+        if os.path.exists(password_file):
+            with open(password_file, 'r') as file:
+                existing_password = file.read()
+            if existing_password == password:
+                # If the existing password matches the new password, consider it successfully written
+                return password_file
+            else:
+                # If the existing password does not match, rename the old file
+                timestamp = int(time.time())
+                new_filename = f"keystore_password_old_{timestamp}.txt"
+                os.rename(password_file, os.path.join(folder, new_filename))
+
+        # Write the new password to the file
         with open(password_file, 'w') as file:
-            file.write(password)  # For demonstration; in practice, consider encrypting this file.
+            file.write(password)
+        
+        # Set file permissions to read-write for owner
         if os.name == 'posix':
-            os.chmod(password_file, int('400', 8))  # Read-only for owner
+            os.chmod(password_file, int('600', 8))  # Read-write for owner
+
         return password_file
 
     def verify_keystores(self, keystore_filefolders: List[str], password: str) -> bool:
