@@ -21,7 +21,7 @@ from staking_deposit.utils.constants import (
     MAX_DEPOSIT_AMOUNT,
     DEFAULT_VALIDATOR_KEYS_FOLDER_NAME,
 )
-from staking_deposit.utils.ascii_art import RHINO_0
+from staking_deposit.utils.ascii_art import DILL_1
 from staking_deposit.utils.click import (
     captive_prompt_callback,
     choice_prompt_func,
@@ -135,7 +135,7 @@ def generate_keys(ctx: click.Context, validator_start_index: int,
     if not os.path.exists(folder):
         os.mkdir(folder)
     click.clear()
-    click.echo(RHINO_0)
+    click.echo(DILL_1)
     click.echo(load_text(['msg_key_creation']))
     credentials = CredentialList.from_mnemonic(
         mnemonic=mnemonic,
