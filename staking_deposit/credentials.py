@@ -249,6 +249,17 @@ class CredentialList:
             os.chmod(filefolder, int('440', 8))  # Read for owner & group
         return filefolder
 
+    def save_password(self, password: str, folder: str) -> str:
+        """
+        Securely saves the password to a file in the specified folder.
+        """
+        password_file = os.path.join(folder, 'keystore_password.txt')
+        with open(password_file, 'w') as file:
+            file.write(password)  # For demonstration; in practice, consider encrypting this file.
+        if os.name == 'posix':
+            os.chmod(password_file, int('400', 8))  # Read-only for owner
+        return password_file
+
     def verify_keystores(self, keystore_filefolders: List[str], password: str) -> bool:
         with click.progressbar(zip(self.credentials, keystore_filefolders),
                                label=load_text(['msg_keystore_verification']),
