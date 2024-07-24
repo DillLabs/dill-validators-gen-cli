@@ -1,4 +1,5 @@
 import os
+import stat
 import click
 from enum import Enum
 import time
@@ -150,9 +151,9 @@ class Credential:
         secret = self.signing_sk.to_bytes(32, 'big')
         return ScryptKeystore.encrypt(secret=secret, password=password, path=self.signing_key_path)
 
-    def save_signing_keystore(self, password: str, folder: str) -> str:
+    def save_signing_keystore(self, password: str, folder: str, timestamp: int) -> str:
         keystore = self.signing_keystore(password)
-        filefolder = os.path.join(folder, 'keystore-%s-%i.json' % (keystore.path.replace('/', '_'), time.time()))
+        filefolder = os.path.join(folder, 'keystore-%s-%i.json' % (keystore.path.replace('/', '_'), timestamp))
         keystore.save(filefolder)
         return filefolder
 
@@ -233,49 +234,58 @@ class CredentialList:
                                    hex_eth1_withdrawal_address=hex_eth1_withdrawal_address)
                         for index in indices])
 
-    def export_keystores(self, password: str, folder: str) -> List[str]:
+    def export_keystores(self, password: str, folder: str, timestamp: int) -> List[str]:
         with click.progressbar(self.credentials, label=load_text(['msg_keystore_creation']),
                                show_percent=False, show_pos=True) as credentials:
-            return [credential.save_signing_keystore(password=password, folder=folder) for credential in credentials]
+            return [credential.save_signing_keystore(password=password, folder=folder, timestamp=timestamp) for credential in credentials]
 
-    def export_deposit_data_json(self, folder: str) -> str:
+    def export_deposit_data_json(self, folder: str, timestamp: int) -> str:
         with click.progressbar(self.credentials, label=load_text(['msg_depositdata_creation']),
                                show_percent=False, show_pos=True) as credentials:
             deposit_data = [cred.deposit_datum_dict for cred in credentials]
-        filefolder = os.path.join(folder, 'deposit_data-%i.json' % time.time())
+        filefolder = os.path.join(folder, f'deposit_data-{timestamp}.json')
         with open(filefolder, 'w') as f:
             json.dump(deposit_data, f, default=lambda x: x.hex())
         if os.name == 'posix':
-            os.chmod(filefolder, int('440', 8))  # Read for owner & group
+            os.chmod(filefolder, int('400', 8))  # Read for owner & group
         return filefolder
 
-    def save_password(self, password: str, folder: str) -> str:
+    def save_password(self, password: str, folder: str, timestamp: int) -> str:
         """
         Securely saves the password to a file in the specified folder.
         Checks if the file already exists and handles it accordingly.
+        Allows passing a timestamp to create a timestamped backup file.
         """
-        password_file = os.path.join(folder, 'keystore_password.txt')
         
-        # Check if the file already exists
+        password_file = os.path.join(folder, 'keystore_password.txt')
+        timestamped_file = os.path.join(folder, f'keystore_password-{timestamp}.txt')
+        
+        # Check if the main password file already exists
         if os.path.exists(password_file):
             with open(password_file, 'r') as file:
                 existing_password = file.read()
             if existing_password == password:
                 # If the existing password matches the new password, consider it successfully written
-                return password_file
+                pass
             else:
-                # If the existing password does not match, rename the old file
-                timestamp = int(time.time())
-                new_filename = f"keystore_password_old_{timestamp}.txt"
-                os.rename(password_file, os.path.join(folder, new_filename))
+                # Set file permissions to read-write for owner if not already set
+                if os.name == 'posix':
+                    current_permissions = stat.S_IMODE(os.stat(password_file).st_mode)
+                    if not (current_permissions & stat.S_IWUSR):  # Check if the owner write permission is missing
+                        os.chmod(password_file, current_permissions | stat.S_IWUSR)
 
-        # Write the new password to the file
+        # Write the new password to the main file
         with open(password_file, 'w') as file:
             file.write(password)
         
-        # Set file permissions to read-write for owner
+        # Write the new password to the timestamped file
+        with open(timestamped_file, 'w') as file:
+            file.write(password)
+
+        # Set file permissions to read-only for owner for both files
         if os.name == 'posix':
-            os.chmod(password_file, int('600', 8))  # Read-write for owner
+            os.chmod(password_file, stat.S_IREAD)
+            os.chmod(timestamped_file, stat.S_IREAD)
 
         return password_file
 
@@ -298,3 +308,4 @@ class CredentialList:
         if os.name == 'posix':
             os.chmod(filefolder, int('440', 8))  # Read for owner & group
         return filefolder
+

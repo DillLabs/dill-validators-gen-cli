@@ -81,7 +81,9 @@ def validate_mnemonic(ctx: click.Context, param: Any, mnemonic: str) -> str:
 )
 @generate_keys_arguments_decorator
 @click.pass_context
-def existing_mnemonic(ctx: click.Context, mnemonic: str, mnemonic_password: str, **kwargs: Any) -> None:
+@click.option('--save_mnemonic', is_flag=True, help='Skip mnemonic verification if set')
+def existing_mnemonic(ctx: click.Context, mnemonic: str, mnemonic_password: str, save_mnemonic: bool, **kwargs: Any) -> None:
     ctx.obj = {} if ctx.obj is None else ctx.obj  # Create a new ctx.obj if it doesn't exist
     ctx.obj.update({'mnemonic': mnemonic, 'mnemonic_password': mnemonic_password})
+    ctx.params['save_mnemonic'] = save_mnemonic  # Add save_mnemonic to ctx.params
     ctx.forward(generate_keys)
