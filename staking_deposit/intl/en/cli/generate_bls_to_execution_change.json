@@ -23,7 +23,7 @@
             "confirm": "Please repeat the index to confirm"
         },
         "arg_chain": {
-            "help": "The name of DILL PoS chain you are targeting. Use \"dill\" if you are depositing DIL",
+            "help": "The name of DILL PoS chain you are targeting. Use \"dill\" if you are depositing DILL",
             "prompt": "Please choose the (dill or dill-testnet) network/chain name"
         },
         "arg_fork": {

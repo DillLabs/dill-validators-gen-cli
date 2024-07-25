@@ -29,17 +29,6 @@ def check_python_version() -> None:
 
 @click.group()
 @click.pass_context
-@jit_option(
-    '--language',
-    callback=captive_prompt_callback(
-        lambda language: fuzzy_reverse_dict_lookup(language, INTL_LANG_OPTIONS),
-        choice_prompt_func(lambda: 'Please choose your language', get_first_options(INTL_LANG_OPTIONS)),
-    ),
-    default='English',
-    help='The language you wish to use the CLI in.',
-    prompt=choice_prompt_func(lambda: 'Please choose your language', get_first_options(INTL_LANG_OPTIONS))(),
-    type=str,
-)
 @click.option(
     '--non_interactive',
     default=False,
@@ -47,8 +36,8 @@ def check_python_version() -> None:
     help='Disables interactive prompts. Warning: with this flag, there will be no confirmation step(s) to verify the input value(s). Please use it carefully.',  # noqa: E501
     hidden=False,
 )
-def cli(ctx: click.Context, language: str, non_interactive: bool) -> None:
-    config.language = language
+def cli(ctx: click.Context, non_interactive: bool) -> None:
+    config.language = 'English'  # Set language to English
     config.non_interactive = non_interactive  # Remove interactive commands
 
 

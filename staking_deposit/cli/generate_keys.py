@@ -1,4 +1,5 @@
 import os
+import stat
 import click
 from typing import (
     Any,
@@ -21,7 +22,7 @@ from staking_deposit.utils.constants import (
     MAX_DEPOSIT_AMOUNT,
     DEFAULT_VALIDATOR_KEYS_FOLDER_NAME,
 )
-from staking_deposit.utils.ascii_art import RHINO_0
+from staking_deposit.utils.ascii_art import DILL_1
 from staking_deposit.utils.click import (
     captive_prompt_callback,
     choice_prompt_func,
@@ -77,7 +78,6 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
             param_decls='--chain',
             prompt=choice_prompt_func(
                 lambda: load_text(['chain', 'prompt'], func='generate_keys_arguments_decorator'),
-                # Since `prater` is alias of `goerli`, do not show `prater` in the prompt message.
                 list(key for key in ALL_CHAINS.keys() if key != PRATER)
             ),
         ),
@@ -115,6 +115,8 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
             param_decls="--deposit_amount",
             prompt=lambda: load_text(['deposit_amount', 'prompt'], func='generate_keys_arguments_decorator'),
         ),
+        click.option('--save_password', is_flag=True, default=False, help='Save the keystore password to a file.'),
+        click.option('--save_mnemonic', is_flag=True, default=False, help='Save the mnemonic to a file.'),
     ]
     for decorator in reversed(decorators):
         function = decorator(function)
@@ -124,8 +126,11 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
 @click.command()
 @click.pass_context
 def generate_keys(ctx: click.Context, validator_start_index: int,
-                  num_validators: int, folder: str, chain: str, keystore_password: str,
-                  execution_address: HexAddress, deposit_amount: int, **kwargs: Any) -> None:
+                    num_validators: int, folder: str, chain: str, keystore_password: str,
+                    execution_address: HexAddress, deposit_amount: int, save_password: bool,
+                    save_mnemonic: bool, **kwargs: Any) -> None:
+    import time
+    current_time = int(time.time())  # Generate a unified timestamp
     mnemonic = ctx.obj['mnemonic']
     mnemonic_password = ctx.obj['mnemonic_password']
     amounts = [deposit_amount] * num_validators
@@ -134,7 +139,7 @@ def generate_keys(ctx: click.Context, validator_start_index: int,
     if not os.path.exists(folder):
         os.mkdir(folder)
     click.clear()
-    click.echo(RHINO_0)
+    click.echo(DILL_1)
     click.echo(load_text(['msg_key_creation']))
     credentials = CredentialList.from_mnemonic(
         mnemonic=mnemonic,
@@ -145,8 +150,16 @@ def generate_keys(ctx: click.Context, validator_start_index: int,
         start_index=validator_start_index,
         hex_eth1_withdrawal_address=execution_address,
     )
-    keystore_filefolders = credentials.export_keystores(password=keystore_password, folder=folder)
-    deposits_file = credentials.export_deposit_data_json(folder=folder)
+    keystore_filefolders = credentials.export_keystores(password=keystore_password, folder=folder, timestamp=current_time)
+    deposits_file = credentials.export_deposit_data_json(folder=folder, timestamp=current_time)  # Use unified timestamp
+    if save_password:
+        credentials.save_password(password=keystore_password, folder=folder, timestamp=current_time)
+    if save_mnemonic:
+        mnemonic_file_path = os.path.join(folder, f'mnemonic-{current_time}.txt')  # Use unified timestamp
+        with open(mnemonic_file_path, 'w') as f:
+            f.write(mnemonic)
+        if os.name == 'posix':
+            os.chmod(mnemonic_file_path, stat.S_IREAD)
     if not credentials.verify_keystores(keystore_filefolders=keystore_filefolders, password=keystore_password):
         raise ValidationError(load_text(['err_verify_keystores']))
     if not verify_deposit_data_json(deposits_file, credentials.credentials):

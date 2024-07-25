@@ -52,13 +52,13 @@ AndesSetting = BaseChainSetting(
 )
 
 ALL_CHAINS: Dict[str, BaseChainSetting] = {
-    MAINNET: MainnetSetting,
-    GOERLI: GoerliSetting,
-    PRATER: GoerliSetting,  # Prater is the old name of the Prater/Goerli testnet
-    SEPOLIA: SepoliaSetting,
-    ZHEJIANG: ZhejiangSetting,
-    HOLESKY: HoleskySetting,
-    DILL: DillSetting,
+    #MAINNET: MainnetSetting,
+    #GOERLI: GoerliSetting,
+    #PRATER: GoerliSetting,  # Prater is the old name of the Prater/Goerli testnet
+    #SEPOLIA: SepoliaSetting,
+    #ZHEJIANG: ZhejiangSetting,
+    #HOLESKY: HoleskySetting,
+    #DILL: DillSetting,
     ANDES: AndesSetting,
 }
 
