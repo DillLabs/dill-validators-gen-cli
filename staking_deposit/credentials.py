@@ -273,11 +273,14 @@ class CredentialList:
                     current_permissions = stat.S_IMODE(os.stat(password_file).st_mode)
                     if not (current_permissions & stat.S_IWUSR):  # Check if the owner write permission is missing
                         os.chmod(password_file, current_permissions | stat.S_IWUSR)
+                    # Write the new password to the main file
+                    with open(password_file, 'w') as file:
+                        file.write(password)
+        else:
+            # Write the new password to the main file
+            with open(password_file, 'w') as file:
+                file.write(password)
 
-        # Write the new password to the main file
-        with open(password_file, 'w') as file:
-            file.write(password)
-        
         # Write the new password to the timestamped file
         with open(timestamped_file, 'w') as file:
             file.write(password)
