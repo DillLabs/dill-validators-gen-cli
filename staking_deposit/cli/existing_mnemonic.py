@@ -72,7 +72,7 @@ def validate_mnemonic(ctx: click.Context, param: Any, mnemonic: str) -> str:
     callback=captive_prompt_callback(
         lambda num: validate_int_range(num, 0, 2**32),
         lambda: load_text(['arg_validator_start_index', 'prompt'], func='existing_mnemonic'),
-        lambda: load_text(['arg_validator_start_index', 'confirm'], func='existing_mnemonic'),
+        #lambda: load_text(['arg_validator_start_index', 'confirm'], func='existing_mnemonic'),
     ),
     default=0,
     help=lambda: load_text(['arg_validator_start_index', 'help'], func='existing_mnemonic'),

@@ -55,11 +55,13 @@ def generate_mnemonic(ctx: click.Context, mnemonic_path: str, **kwargs: Any) -> 
 
     if mnemonic_path:
         if os.path.exists(mnemonic_path):
-            with open(mnemonic_path, 'r') as file:
-                existing_mnemonic = file.read().strip()
-            if existing_mnemonic:
-                click.echo(f'The file {mnemonic_path} already contains exists. Please move {mnemonic_path} before saving a new one.')
-                raise Exception(f'The file {mnemonic_path} already contains exists. Please move {mnemonic_path} before saving a new one.')
+            #with open(mnemonic_path, 'r') as file:
+            #    existing_mnemonic = file.read().strip()
+            #if existing_mnemonic:
+            #    click.echo(f'The file {mnemonic_path} already contains exists. Please move {mnemonic_path} before saving a new one.')
+            #    raise Exception(f'The file {mnemonic_path} already contains exists. Please move {mnemonic_path} before saving a new one.')
+            if not os.access(mnemonic_path, os.W_OK):
+                os.chmod(mnemonic_path, 0o666)  # Add write permission
         else:
             os.makedirs(os.path.dirname(mnemonic_path), exist_ok=True)
 
