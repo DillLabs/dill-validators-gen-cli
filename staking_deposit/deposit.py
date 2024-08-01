@@ -4,6 +4,7 @@ import sys
 from staking_deposit.cli.existing_mnemonic import existing_mnemonic
 from staking_deposit.cli.generate_bls_to_execution_change import generate_bls_to_execution_change
 from staking_deposit.cli.new_mnemonic import new_mnemonic
+from staking_deposit.cli.generate_mnemonic import generate_mnemonic
 from staking_deposit.utils.click import (
     captive_prompt_callback,
     choice_prompt_func,
@@ -43,10 +44,10 @@ def cli(ctx: click.Context, non_interactive: bool) -> None:
 
 cli.add_command(existing_mnemonic)
 cli.add_command(new_mnemonic)
+cli.add_command(generate_mnemonic)
 cli.add_command(generate_bls_to_execution_change)
 
 
 if __name__ == '__main__':
     check_python_version()
-    print('\n***Using the tool on an offline and secure device is highly recommended to keep your mnemonic safe.***\n')
     cli()
