@@ -35,6 +35,7 @@ languages = get_first_options(MNEMONIC_LANG_OPTIONS)
 @click.pass_context
 @click.option('--mnemonic_path', type=str, help='Path to save the generated mnemonic')
 def generate_mnemonic(ctx: click.Context, mnemonic_path: str, **kwargs: Any) -> str:
+    print('\n***Using the tool on an offline and secure device is highly recommended to keep your mnemonic safe.***\n')
     mnemonic_language = 'english'  # Hardcode language to english
     mnemonic = get_mnemonic(language=mnemonic_language, words_path=WORD_LISTS_PATH)
     click.clear()

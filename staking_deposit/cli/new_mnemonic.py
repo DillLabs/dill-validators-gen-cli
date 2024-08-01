@@ -37,6 +37,7 @@ languages = get_first_options(MNEMONIC_LANG_OPTIONS)
 @generate_keys_arguments_decorator
 @click.option('--save_mnemonic', is_flag=True, help='Skip mnemonic verification if set')
 def new_mnemonic(ctx: click.Context, save_mnemonic: bool, **kwargs: Any) -> None:
+    print('\n***Using the tool on an offline and secure device is highly recommended to keep your mnemonic safe.***\n')
     mnemonic_language = 'english'  # Hardcode language to english
     mnemonic = get_mnemonic(language=mnemonic_language, words_path=WORD_LISTS_PATH)
     if not save_mnemonic:
