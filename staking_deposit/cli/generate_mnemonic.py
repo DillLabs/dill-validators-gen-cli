@@ -46,7 +46,7 @@ def generate_mnemonic(ctx: click.Context, mnemonic_path: str, **kwargs: Any) -> 
     else:
         click.echo("This is your mnemonic (seed phrase). It is the ONLY way to retrieve your deposit.")
         click.echo('\n\n%s\n\n' % mnemonic)
-        click.pause('The mnemonic will be save to %s' % mnemonic_path)
+        click.pause('The mnemonic will be save to %s. Press any key to continue...' % mnemonic_path)
 
     click.clear()
     # Do NOT use mnemonic_password.
@@ -73,6 +73,6 @@ def generate_mnemonic(ctx: click.Context, mnemonic_path: str, **kwargs: Any) -> 
         if written_content != mnemonic:
             raise Exception(f'Failed to write mnemonic correctly to file, written_content {written_content} != {mnemonic}')
         os.chmod(mnemonic_path, 0o444)
-        click.pause('The mnemonic has been saved to %s. Press any key to continue...' % mnemonic_path)
+        click.echo('The mnemonic has been saved to %s' % mnemonic_path)
 
     return mnemonic
