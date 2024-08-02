@@ -73,7 +73,6 @@ def generate_mnemonic(ctx: click.Context, mnemonic_path: str, **kwargs: Any) -> 
         if written_content != mnemonic:
             raise Exception(f'Failed to write mnemonic correctly to file, written_content {written_content} != {mnemonic}')
         os.chmod(mnemonic_path, 0o444)
-        click.echo('The mnemonic has been saved to %s' % mnemonic_path)
+        click.pause('The mnemonic has been saved to %s. Press any key to continue...' % mnemonic_path)
 
     return mnemonic
-    
