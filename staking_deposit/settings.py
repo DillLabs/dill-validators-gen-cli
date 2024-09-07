@@ -19,6 +19,7 @@ ZHEJIANG = 'zhejiang'
 HOLESKY = 'holesky'
 DILL = 'dill'
 ANDES = 'andes'
+ALPS = 'alps'
 
 # Mainnet setting
 MainnetSetting = BaseChainSetting(
@@ -51,6 +52,12 @@ AndesSetting = BaseChainSetting(
     GENESIS_VALIDATORS_ROOT=bytes.fromhex(ANDES_GENESIS_VALIDATORS_ROOT_HEX)
 )
 
+ALPS_GENESIS_VALIDATORS_ROOT_HEX='e894b506c2985d40978007c091ed7b87a25d4783d033acc18431483667fa1365'
+AlpsSetting = BaseChainSetting(
+    NETWORK_NAME=ALPS, GENESIS_FORK_VERSION=bytes.fromhex('01017552'),
+    GENESIS_VALIDATORS_ROOT=bytes.fromhex(ALPS_GENESIS_VALIDATORS_ROOT_HEX)
+)
+
 ALL_CHAINS: Dict[str, BaseChainSetting] = {
     #MAINNET: MainnetSetting,
     #GOERLI: GoerliSetting,
@@ -60,6 +67,7 @@ ALL_CHAINS: Dict[str, BaseChainSetting] = {
     #HOLESKY: HoleskySetting,
     #DILL: DillSetting,
     ANDES: AndesSetting,
+    ALPS: AlpsSetting,
 }
 
 
