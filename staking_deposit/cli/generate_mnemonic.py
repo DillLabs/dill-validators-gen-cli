@@ -44,9 +44,11 @@ def generate_mnemonic(ctx: click.Context, mnemonic_path: str, **kwargs: Any) -> 
         click.echo('\n\n%s\n\n' % mnemonic)
         click.pause(load_text(['msg_press_any_key']))
     else:
-        click.echo("This is your mnemonic (seed phrase). It is the ONLY way to retrieve your deposit.")
+        #click.echo("This is your mnemonic (seed phrase). Write it down and store it safely. It is the ONLY way to retrieve your deposit.")
+        click.echo(load_text(['msg_mnemonic_presentation']))
         click.echo('\n\n%s\n\n' % mnemonic)
-        click.pause('The mnemonic will be save to %s. Press any key to continue...' % mnemonic_path)
+        click.pause(load_text(['msg_press_any_key']))
+        click.pause('As a backup, the mnemonic will be automatically saved to %s. Press any key to continue...' % mnemonic_path)
 
     click.clear()
     # Do NOT use mnemonic_password.
