@@ -100,8 +100,8 @@ def generate_keys_arguments_decorator(function: Callable[..., Any]) -> Callable[
             callback=captive_prompt_callback(
                 lambda address: validate_eth1_withdrawal_address(None, None, address),
                 lambda: load_text(['arg_execution_address', 'prompt'], func='generate_keys_arguments_decorator'),
-                lambda: load_text(['arg_execution_address', 'confirm'], func='generate_keys_arguments_decorator'),
-                lambda: load_text(['arg_execution_address', 'mismatch'], func='generate_keys_arguments_decorator'),
+                #lambda: load_text(['arg_execution_address', 'confirm'], func='generate_keys_arguments_decorator'),
+                #lambda: load_text(['arg_execution_address', 'mismatch'], func='generate_keys_arguments_decorator'),
             ),
             default=None,
             help=lambda: load_text(['arg_execution_address', 'help'], func='generate_keys_arguments_decorator'),
