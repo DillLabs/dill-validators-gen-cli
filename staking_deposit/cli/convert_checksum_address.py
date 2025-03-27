@@ -9,7 +9,7 @@ from staking_deposit.utils.intl import (
 FUNC_NAME = 'convert_checksum_address'
 
 @click.command()
-@click.option('--address', required=True, help='The Ethereum address to convert to checksum format')  # 使用 @click.option 来支持 --address
+@click.option('--address', required=True, help='The Ethereum address to convert to checksum format')
 @click.pass_context
 def convert_checksum_address(ctx, address: str):
     checksum_address = to_checksum_address(address)
